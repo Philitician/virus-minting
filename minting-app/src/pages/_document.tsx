@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { ColorModeScript } from "@chakra-ui/react";
-import customTheme from "lib/styles/customTheme";
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
@@ -41,9 +40,7 @@ class MyDocument extends Document {
           <link rel="manifest" href="/manifest.json" />
         </Head>
         <body>
-          <ColorModeScript
-            initialColorMode={customTheme.config?.initialColorMode}
-          />
+          <ColorModeScript initialColorMode="dark" />
           <Main />
           <NextScript />
         </body>

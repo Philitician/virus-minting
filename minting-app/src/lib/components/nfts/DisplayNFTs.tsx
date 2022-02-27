@@ -1,11 +1,14 @@
 import { Box, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
-import { participatingVirusContract } from "../../../utils/constants";
+import {
+  participatingVirusContract,
+  pioneeringVirusContract,
+} from "../../../utils/constants";
 import { IMetadata, INFT } from "./INFT";
 
 const DisplayNFTs = () => {
-  const { user, isAuthenticated } = useMoralis();
+  const { user, isAuthenticated, account } = useMoralis();
   const {
     account: { getNFTsForContract },
   } = useMoralisWeb3Api();
@@ -13,37 +16,42 @@ const DisplayNFTs = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const serialize = (metadataRaw: string) => {
-      const metadata: IMetadata = JSON.parse(metadataRaw);
-      return metadata;
-    };
+    const address = account ?? user?.attributes.accounts[0] ?? "";
 
     const getNFTs = async () => {
-      const address = user?.attributes.accounts[0] ?? "";
-      const { result: participatingNFTs } = await getNFTsForContract({
+      const { result: participatingVirusRaw } = await getNFTsForContract({
         token_address: participatingVirusContract,
         address,
         chain: "mumbai",
       });
-      const nfts: INFT[] =
-        participatingNFTs?.map((nft) => {
-          const metadata = serialize(nft.metadata ?? "");
-          return {
-            ...nft,
-            metadata,
-          };
-        }) ?? [];
-      // const { result: pioneeringNFTs } = await getNFTsForContract({
-      //   token_address: pioneeringVirusContract,
-      //   address,
-      // });
-      setOwnedVirusNFTs([...nfts]);
-      // setOwnedVirusNFTs(participatingNFTs);
+      const participatingNfts: INFT[] = cleanNFTResults(participatingVirusRaw);
+
+      const { result: pioneeringVirusRaw } = await getNFTsForContract({
+        token_address: pioneeringVirusContract,
+        address,
+        chain: "mumbai",
+      });
+      const pioneeringNfts: INFT[] = cleanNFTResults(pioneeringVirusRaw);
+      setOwnedVirusNFTs([...pioneeringNfts, ...participatingNfts]);
     };
     getNFTs();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.getUsername(), account]);
 
   return <Box>{ownedVirusNFTs && ownedVirusNFTs?.map(NFTCard)}</Box>;
+};
+
+const cleanNFTResults = (nfts: any) =>
+  nfts?.map((nft: any) => {
+    const metadata = serialize(nft.metadata ?? "");
+    return {
+      ...nft,
+      metadata,
+    };
+  }) ?? [];
+
+const serialize = (metadataRaw: string) => {
+  const metadata: IMetadata = JSON.parse(metadataRaw);
+  return metadata;
 };
 
 const NFTCard = ({

@@ -1,6 +1,7 @@
 import { Box, Stack, Text } from "@chakra-ui/react";
 import DisplayNFTs from "lib/components/nfts/DisplayNFTs";
-import Minting from "lib/components/nfts/Minting";
+import ParticipantMinting from "lib/components/nfts/ParticipantMinting";
+import PioneerMinting from "lib/components/nfts/PioneerMinting";
 import { useMoralis } from "react-moralis";
 
 const Home = () => {
@@ -12,7 +13,10 @@ const Home = () => {
       )}
       {isAuthenticated && (
         <Stack direction="column" alignItems="center">
-          <Minting />
+          <Stack direction="row">
+            <PioneerMinting />
+            <ParticipantMinting />
+          </Stack>
           <DisplayNFTs />
         </Stack>
       )}
