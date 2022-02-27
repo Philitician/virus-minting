@@ -3,6 +3,7 @@ const withPWA = require("next-pwa");
 
 /** @type {import('next').NextConfig} */
 module.exports = withPWA({
+  ignoreDuringBuilds: true,
   pwa: {
     disable:
       process.env.NODE_ENV === "development" ||
@@ -16,6 +17,6 @@ module.exports = withPWA({
   },
   reactStrictMode: true,
   eslint: {
-    dirs: ["src"],
+    dirs: [],
   },
 });
