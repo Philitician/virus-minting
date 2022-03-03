@@ -28,6 +28,9 @@ module.exports = {
       url: MUMBAI_NODE_URL,
       accounts: [PRIVATE_KEY],
     },
-    // matic: {},
+    matic: {
+      url: MATIC_NODE_URL,
+      accounts: [PRIVATE_KEY],
+    },
   },
 };

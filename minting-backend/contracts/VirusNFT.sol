@@ -18,14 +18,6 @@ contract VirusNFT is ERC721, Ownable {
         maxSupply = _maxSupply;
     }
 
-    function mintMany(uint256 amount) public onlyOwner {
-        require(maxSupply >= _tokenIds.current() + amount);
-        for (uint256 i; i < amount; i++) {
-            _tokenIds.increment();
-            _safeMint(msg.sender, _tokenIds.current());
-        }
-    }
-
     function mint() public {
         if (msg.sender != owner()) {
             require(getBalanceOfAccount() < 1);

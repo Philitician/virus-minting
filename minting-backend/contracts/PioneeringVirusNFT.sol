@@ -12,7 +12,8 @@ contract PioneeringVirusNFT is ERC721, Ownable {
     string baseURI;
     uint256 maxSupply;
     bool paused = false;
-    mapping(address => bool) public whitelisted;
+    mapping(address => uint256) public whitelistIndexes;
+    address[] whitelist;
 
     constructor(string memory _name, string memory _symbol, uint256 _maxSupply, string memory _initBaseURI) ERC721(_name, _symbol) {
         setBaseURI(_initBaseURI);
@@ -21,18 +22,27 @@ contract PioneeringVirusNFT is ERC721, Ownable {
     }
 
     function mint() public {
-        require(getBalanceOfAccount() < 1);
+        require(isWhitelisted());
+        if (msg.sender != owner()) {
+            require(!hasMinted());
+        }
         require(maxSupply >= _tokenIds.current() + 1);
         _tokenIds.increment();
         _safeMint(msg.sender, _tokenIds.current());
     }
 
     function setWhitelisted(address _address) public onlyOwner {
-        whitelisted[_address] = true;
+        require(!isWhitelisted(_address));
+        whitelistIndexes[_address] = whitelist.length;
+        whitelist.push(_address);
     }
 
     function isWhitelisted() public view returns (bool) {
-        return whitelisted[msg.sender] ? true : false;
+        return isWhitelisted(msg.sender);
+    }
+
+    function isWhitelisted(address _address) private view returns (bool) {
+        return whitelistIndexes[_address] > 0;
     }
 
     function setPaused() public onlyOwner {
