@@ -19,6 +19,7 @@ contract VirusNFT is ERC721, Ownable {
     }
 
     function mint() public {
+        require(!paused);
         if (msg.sender != owner()) {
             require(getBalanceOfAccount() < 1);
         }
